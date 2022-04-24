@@ -15,12 +15,6 @@ typedef struct intNode
 	struct intNode* next;
 }intNode;
 
-/// <summary>
-/// Managing structure for the Queue ADT
-/// </summary>
-/// 
-/// <field> head - pointer to the head node of a singly linked list </field>
-/// <field> tail - pointer to the tail node of a singly linked list </field>
 typedef struct Queue
 {
 	intNode* head;

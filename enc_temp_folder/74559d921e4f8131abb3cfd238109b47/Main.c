@@ -8,9 +8,9 @@ void main()
 	Stack* s = &stack;
 	initStack(s);
 	push(s, 'a');
-	printf("pushed, expcets 'a'='%c'\n", s->head->data);
-	printf("pop expexts 'a'='%c'\n", pop(s));
-	printf("isEmptyStack expects '1'='%d'\n", isEmptyStack(s));
+	printf("pushed, expcets 'a'='%c'", s->head->data);
+	printf("pop expexts 'a'='%c'", pop(s));
+	printf("isEmptyStack expects '1'='%d'", isEmptyStack(s));
 	//STACKS EXE
 	//Exe I
 	char sentence1[] = "Remem#reb# thi#crap s#tice"; // Temp 1

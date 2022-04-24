@@ -72,20 +72,18 @@ void flipBetweenHashes(const char* sentence)
 		printf("push: memory allocation problem\n");
 		return;
 	}
-	initStack(temp1);
 	Stack* temp2 = (Stack*)malloc(sizeof(Stack)); // new allocation 
 	if (temp2 == NULL) // check if the allocation exists
 	{
 		printf("push: memory allocation problem\n");
 		return;
 	}
-	initStack(temp2);
 
 	for (; i < strlen(sentence); i++) { //pass all the sentence
 		num++;
 		if (*(sentence+i) == '#') { //getting to the first hash
  			i++;
-			push(temp1, *(sentence+i)); //move the items between the hashes to temp1
+			push(temp1, pop(sentence)); //move the items between the hashes to temp1
 			if (*(sentence+i) == '#') { //stop when getting to the second hash
 				return;
 			}
