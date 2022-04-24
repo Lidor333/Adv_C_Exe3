@@ -19,6 +19,9 @@ void push(Stack* s, char data);
 char pop(Stack* s);
 int isEmptyStack(const Stack* s);
 
+void display(Stack* s);
+void print(charNode* head);
+
 /*************** Functions using Stacks - Declaration **************************/
 
 /// <summary>

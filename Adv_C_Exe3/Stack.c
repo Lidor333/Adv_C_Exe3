@@ -15,9 +15,9 @@ void destroyStack(Stack* s)
 	charNode* tmp = s->head; 
 	while (s->head != NULL)
 	{
+		tmp = s->head;                //free stack
 		s->head = s->head->next;
 		free(tmp);
-		tmp = s->head;                //free stack
 	}
 
 }
@@ -65,7 +65,6 @@ int isEmptyStack(const Stack* s)
 
 void flipBetweenHashes(const char* sentence)
 {
-	int i = 0,num=0;
 	Stack* temp1 = (Stack*)malloc(sizeof(Stack)); // new allocation 
 	if (temp1 == NULL) // check if the allocation exists
 	{
@@ -73,32 +72,38 @@ void flipBetweenHashes(const char* sentence)
 		return;
 	}
 	initStack(temp1);
-	Stack* temp2 = (Stack*)malloc(sizeof(Stack)); // new allocation 
-	if (temp2 == NULL) // check if the allocation exists
-	{
-		printf("push: memory allocation problem\n");
-		return;
-	}
-	initStack(temp2);
 
-	for (; i < strlen(sentence); i++) { //pass all the sentence
-		num++;
-		if (*(sentence+i) == '#') { //getting to the first hash
- 			i++;
-			push(temp1, *(sentence+i)); //move the items between the hashes to temp1
-			if (*(sentence+i) == '#') { //stop when getting to the second hash
-				return;
+	for (int i = 0; i < strlen(sentence); i++) {
+		if (*(sentence + i) != '#') {
+			printf("%c", * (sentence + i));
+		}
+		else {
+			i++;
+			while (*(sentence + i) != '#' && i < strlen(sentence)) {
+				push(temp1, *(sentence + i));
+				i++;
 			}
-			while (temp1->head != NULL) { //move the items from temp1 to temp2
-				push(temp2, pop(temp1));
-			}
-			while (temp2->head != NULL) { //move the items from temp2 to sentence
-				push(*(sentence+num), pop(temp2));
-			 }
+			display(temp1);
+			destroyStack(temp1);
 		}
 	}
-	printf("%s", sentence);
 }
+
+void display(Stack* s)
+{
+	print(s->head);
+}
+
+void print(charNode* head)
+{
+	charNode* tmp;
+	tmp = head;
+	while (tmp != NULL) {
+		printf("%c", tmp->data);
+		tmp = tmp->next;
+	}
+}
+
 
 int isPalindrome(Stack* s)
 {
@@ -110,7 +115,8 @@ int isPalindrome(Stack* s)
 		return 0;
 	}
 
-	for (; s->head != NULL; s->head = s->head->next) { //count items
+	charNode* current = s->head;
+	for (; current != NULL; current = current->next) { //count items
 		count++;
 	}
 
@@ -140,18 +146,21 @@ void rotateStack(Stack* s, int n)
 		printf("push: memory allocation problem\n");
 		return;
 	}
+	initStack(temp1);
 	Stack* temp2 = (Stack*)malloc(sizeof(Stack)); // new allocation 
 	if (temp2 == NULL) // check if the allocation exists
 	{
 		printf("push: memory allocation problem\n");
 		return;
 	}
+	initStack(temp2);
 	int count = 0; 
 	if (n < 0) {    //check if the N is negative
 		return;
 	}
 
-	for (; s->head != NULL; s->head = s->head->next) { //count items
+	charNode* current = s->head;
+	for (; current != NULL; current = current->next) { //count items
 		count++;
 	}
 	if (n > count) {  //check if the N are bigger than the number of the items on the stack
@@ -162,7 +171,7 @@ void rotateStack(Stack* s, int n)
 		push(temp1, pop(s)); 
 	}
 
-	while (n < 0) {  //move N items from temp1 to temp2 
+	while (n > 0) {  //move N items from temp1 to temp2 
 		push(temp2, pop(temp1));
 		n--;
 	}
