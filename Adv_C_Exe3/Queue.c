@@ -7,38 +7,38 @@
 
 void initQueue(Queue* q)
 {
-	q->head = NULL;    
+	q->head = NULL;
 	q->tail = NULL;      //initialize the queue
 }
 
 void destroyQueue(Queue* q)
 {
-	if ((q->head) != (q->tail)) {
-		free(q);
+	while (!isEmptyQueue(q)) {
+		intNode* temp = q->head;
 		q->head = q->head->next;
+		free(temp);
 	}                                 //free all the elements
 }
 
 void enqueue(Queue* q, unsigned int data)
 {
-	intNode* newnode = (intNode*)malloc(sizeof(intNode)); // new allocation
-	if (newnode == NULL) {
-		printf("push: memory allocation problem\n");   // check if the allocation exists    
-		return;
-	}
-	newnode->data = data;       //check in information
-	newnode->next = NULL;
-
-	if (q->head = q->tail = NULL) {  //put a first item to the queue
-		q->tail = q->head = newnode;
-	}
-	else
-		q->tail->next = newnode; //put item in the queue
-	q->tail = newnode; //put the item in the first place in the queue
+	intNode* p = (intNode*)malloc(sizeof(intNode));
+	p->data = data;
+	p->next = NULL;
+	if (!isEmptyQueue(q)) q->tail->next = p; // not Empty?
+	//Add after last:
+	else q->head = p; // Otherwise – it becomes
+	//first
+	q->tail = p; // update queue tail
 }
 
 unsigned int dequeue(Queue* q)
 {
+	if (isEmptyQueue(q)) {
+		printf("Cannot dequeue empty queue");
+		return 0;
+	}
+
 	int temp = q->head->data;
 	intNode* temp1 = q->head;
 	q->head = q->head->next;
@@ -52,7 +52,7 @@ int isEmptyQueue(const Queue* q)
 		return 1;
 	}
 	else return 0;                //check if the queue is empty
-	
+
 }
 
 /***************** Functions using Queues - Implementation/definition **************************/
@@ -64,100 +64,100 @@ void rotateQueue(Queue* q)
 		printf("push: memory allocation problem\n");
 		return;
 	}
-	Queue* temp2 = (Queue*)malloc(sizeof(Queue)); // new allocation
-	if (temp2 == NULL) { // check if the allocation exists
-		printf("push: memory allocation problem\n");
-		return;
-	}
+	initQueue(temp1);
 
-	if ((q->head) != (q->tail)) { //move all the elements to a new queue except the last one
+	while (q->head != q->tail) { //move all the elements to a new queue except the last one
 		enqueue(temp1, dequeue(q));
 	}
-	enqueue(temp2, dequeue(q)); //move the last element to temp2
-	enqueue(temp2, dequeue(temp1)); //move all the remain elements to temp2
+	while (!isEmptyQueue(temp1))
+		enqueue(q, dequeue(temp1)); //move all the remain elements to temp2
 }
 
 void cutAndReplace(Queue* q)
 {
-	int count, avg = 0,i = 0;
-	for (count = 0; q->head->next != NULL; q->head = q->head->next) {
+	int count;
+	intNode* current = q->head;
+	for (count = 0; current != NULL; current = current->next) {
 		count++;
 	}
-	if(count%2==0){
-		Queue* temp1 = (Queue*)malloc(sizeof(Queue)); // new allocation
-		if (temp1 == NULL) {  // check if the allocation exists
-			printf("push: memory allocation problem\n");
-			return;
+	if (count % 2 != 0) {
+		intNode* current = q->head;
+		int sum = 0;
+		for (; current != NULL; current = current->next) {
+			sum += current->data;
 		}
-		Queue* temp2 = (Queue*)malloc(sizeof(Queue)); // new allocation
-		if (temp2 == NULL) { // check if the allocation exists
-			printf("push: memory allocation problem\n");
-			return;
-		}
-
-		for (; i = !count / 2; i++) { 
-			enqueue(temp1, dequeue(q));
-		}
-		for (; i = !count; i++) {
-			enqueue(temp2, dequeue(q));
-		}
-		while (temp2->head != temp2->tail != NULL) {
-			enqueue(temp1, dequeue(temp2));
-		}
-
-		
-	
-	}
-	else {
-		for (; q->head->next != NULL; q->head = q->head->next) {
-			avg += q->head->data;
-			avg /= count;
-			intNode* add = (intNode*)malloc(sizeof(intNode));
-			if (!add) {
-				add->data = avg;
-				add->next = NULL;
-			}
-		}
+		enqueue(q, sum / count);
+		count++;
 	}
 
-}
+	int half = count / 2;
 
-void sortKidsFirst(Queue* q)
-{
 	Queue* temp1 = (Queue*)malloc(sizeof(Queue)); // new allocation
 	if (temp1 == NULL) {  // check if the allocation exists
 		printf("push: memory allocation problem\n");
 		return;
 	}
+	initQueue(temp1);
+
+	for (int i = 0; i < half; i++)
+		enqueue(temp1, dequeue(q)); //from head need to go to tail
+
 	Queue* temp2 = (Queue*)malloc(sizeof(Queue)); // new allocation
 	if (temp2 == NULL) { // check if the allocation exists
 		printf("push: memory allocation problem\n");
 		return;
 	}
-	int count, k = 0;
-	for (count = 0; q->head->next != NULL; q->head = q->head->next) {
+	initQueue(temp2);
+
+	for (int i = 0; i < half; i++) {
+		rotateQueue(q);
+		enqueue(temp2, dequeue(q));
+	}
+
+	for (int i = 0; i < half; i++) {
+		enqueue(q, dequeue(temp2));
+	}
+
+	for (int i = 0; i < half; i++) {
+		enqueue(q, dequeue(temp1));
+	}
+}
+
+void sortKidsFirst(Queue* q)
+{
+	if (isEmptyQueue(q)) return;
+
+	Queue* temp1 = (Queue*)malloc(sizeof(Queue)); // new allocation
+	if (temp1 == NULL) {  // check if the allocation exists
+		printf("push: memory allocation problem\n");
+		return;
+	}
+	initQueue(temp1);
+	
+	int count;
+	intNode* current = q->head;
+	for (count = 0; current != NULL; current = current->next) {
 		count++;                       //count the items in the queue
 	}
 
-	for (int i = 0; i < count; i++) {
-		if ((q->head->data) < (q->tail->data)) {  //check if the tail bigger than the head
-			q->head = q->head->next;
-		}
-		if ((q->head->data) > (q->tail->data)) { //check if the head bigger than the tail
-			k = q->tail->data;
-			q->tail->data = q->head->data;
-			q->head->data = k;
-		}
-		if ((q->head->data) == (q->tail->data)) { //check if the tail and the head equal
-			enqueue(temp2, dequeue(q));
-			for (; (count - 1) != 0; count--) {
-				enqueue(temp1, dequeue(q));
+	while (!isEmptyQueue(q)) {
+		int min = dequeue(q);
+		count--;
+		
+		for (int i = 0; i < count; i++) {
+			int val = dequeue(q);
+			if (min >= val) {
+				enqueue(q, min);
+				min = val;
 			}
-			enqueue(temp1, dequeue(temp2));
-			for (; q->head->next != NULL; q->head = q->head->next) {
-				enqueue(q, dequeue(temp1));
+			else {
+				enqueue(q, val);
 			}
 		}
+		enqueue(temp1, min);
+	}
+	while (!isEmptyQueue(temp1)) {
+		enqueue(q, dequeue(temp1));
 	}
 }
 
